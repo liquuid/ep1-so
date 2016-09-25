@@ -1,16 +1,12 @@
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.Scanner;
-
-import static com.oracle.jrockit.jfr.DataType.UTF8;
 
 public class Escalonador {
-    private final  String[] lista = {
+    private final String[] lista = {
             "01.txt",
             "02.txt",
             "03.txt",
@@ -24,11 +20,12 @@ public class Escalonador {
     private final String quantum_name = "quantum.txt";
     private ArrayList<String> readyProcess = new ArrayList<String>();
 
-    public Escalonador(){
+    public Escalonador() {
         this.readFiles();
 
     }
-    public String[] getLista(){
+
+    public String[] getLista() {
         return lista;
     }
 
@@ -37,21 +34,20 @@ public class Escalonador {
     }
 
     static String readFile(String path, Charset encoding)
-            throws IOException
-    {
+            throws IOException {
 
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
 
     }
 
-    private void readFiles(){
+    private void readFiles() {
         int i = 0;
 
-        for (String file_name: lista) {
+        for (String file_name : lista) {
             try {
                 URL url = getClass().getResource(file_name);
-                readyProcess.add(readFile(url.getPath(), Charset.defaultCharset() ));
+                readyProcess.add(readFile(url.getPath(), Charset.defaultCharset()));
                 i++;
             } catch (IOException e) {
                 e.printStackTrace();
