@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import static jdk.nashorn.internal.runtime.JSType.toInteger;
+
 public class Escalonador {
     private final String[] lista = {
             "01.txt",
@@ -19,9 +21,12 @@ public class Escalonador {
             "10.txt"};
     private final String quantum_name = "quantum.txt";
     private ArrayList<String> readyProcess = new ArrayList<String>();
+    private int quantum = 0;
+
 
     public Escalonador() {
         this.readFiles();
+        this.readQuantum();
 
     }
 
@@ -55,7 +60,23 @@ public class Escalonador {
         }
     }
 
+    private void readQuantum() {
+        try {
+            URL url = getClass().getResource(this.quantum_name);
+            this.quantum = Integer.parseInt(readFile(url.getPath(), Charset.defaultCharset()).replace("\n", ""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     public ArrayList<String> getReadyProcess() {
         return readyProcess;
+    }
+
+    public int getQuantum() {
+        return this.quantum;
     }
 }
