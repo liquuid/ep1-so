@@ -8,11 +8,11 @@ public class BCP {
     private int state = 0;
     private List<String> program;
 
-    public BCP(String program){
-
-
+    public BCP(String program) {
+        this.program = this.digestProgram(program);
     }
-    public List<String> digestProgram(String program){
+
+    public List<String> digestProgram(String program) {
         return Arrays.asList(program.split("\n"));
     }
 
@@ -46,5 +46,9 @@ public class BCP {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public List<String> getProgram() {
+        return program;
     }
 }

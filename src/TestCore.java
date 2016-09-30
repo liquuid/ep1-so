@@ -89,14 +89,15 @@ public class TestCore {
     }
 
     @Test
-    public void testBCP() {
+    public void testBCPConstruction() {
         BCP bcp = new BCP(escalonador.getReadyProcess().get(0));
 
         assertTrue(bcp.getX() == 0);
         assertTrue(bcp.getY() == 0);
         assertTrue(bcp.getPc() == -1);
         assertTrue(bcp.getState() == 0);
-        // assertTrue(bcp.program.size() > 0);
+        assertTrue(bcp.getProgram().size() > 0);
+
     }
 
     @Test
