@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ep1-so" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="lib/ant-javafx.jar"/>
+      <include name="lib/dt.jar"/>
+      <include name="lib/javafx-mx.jar"/>
+      <include name="lib/jconsole.jar"/>
+      <include name="lib/packager.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="lib/tools.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module EP1-SO -->
+  
+  <dirname property="module.ep1-so.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.ep1-so" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ep1-so" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ep1-so" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ep1-so" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="ep1-so.output.dir" value="${module.ep1-so.basedir}/out/production/EP1-SO"/>
+  <property name="ep1-so.testoutput.dir" value="${module.ep1-so.basedir}/out/test/EP1-SO"/>
+  
+  <path id="ep1-so.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ep1-so.module.production.classpath">
+    <path refid="${module.jdk.classpath.ep1-so}"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+    <pathelement location="${basedir}/processos"/>
+  </path>
+  
+  <path id="ep1-so.runtime.production.module.classpath">
+    <pathelement location="${ep1-so.output.dir}"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+    <pathelement location="${basedir}/processos"/>
+  </path>
+  
+  <path id="ep1-so.module.classpath">
+    <path refid="${module.jdk.classpath.ep1-so}"/>
+    <pathelement location="${ep1-so.output.dir}"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+    <pathelement location="${basedir}/processos"/>
+  </path>
+  
+  <path id="ep1-so.runtime.module.classpath">
+    <pathelement location="${ep1-so.testoutput.dir}"/>
+    <pathelement location="${ep1-so.output.dir}"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+    <pathelement location="${basedir}/processos"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ep1-so">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ep1-so">
+    <patternset refid="excluded.from.module.ep1-so"/>
+  </patternset>
+  
+  <path id="ep1-so.module.sourcepath">
+    <dirset dir="${module.ep1-so.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ep1-so" depends="compile.module.ep1-so.production,compile.module.ep1-so.tests" description="Compile module EP1-SO"/>
+  
+  <target name="compile.module.ep1-so.production" depends="register.custom.compilers" description="Compile module EP1-SO; production classes">
+    <mkdir dir="${ep1-so.output.dir}"/>
+    <javac2 destdir="${ep1-so.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ep1-so}/javac">
+      <compilerarg line="${compiler.args.ep1-so}"/>
+      <bootclasspath refid="ep1-so.module.bootclasspath"/>
+      <classpath refid="ep1-so.module.production.classpath"/>
+      <src refid="ep1-so.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ep1-so"/>
+    </javac2>
+    
+    <copy todir="${ep1-so.output.dir}">
+      <fileset dir="${module.ep1-so.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ep1-so.tests" depends="register.custom.compilers,compile.module.ep1-so.production" description="compile module EP1-SO; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ep1-so" description="cleanup module">
+    <delete dir="${ep1-so.output.dir}"/>
+    <delete dir="${ep1-so.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.ep1-so" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.ep1-so" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
