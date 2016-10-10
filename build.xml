@@ -211,4 +211,10 @@
   <target name="build.modules" depends="init, clean, compile.module.ep1-so" description="build all modules"/>
   
   <target name="all" depends="build.modules" description="build all"/>
+
+
+  <target name="run">
+    <java jar="out/production/EP1-SO/TestCore.class" fork="true"/>
+  </target>
+
 </project>

@@ -50,12 +50,13 @@ public class TestCore {
 
     @Test
     public void testLoadFiles() {
-        assertEquals(escalonador.getReadyProcess().size(), 10);
+        assertEquals(escalonador.getReadyProcessInput().size(), 10);
     }
+
 
     @Test
     public void testIsRightFileLoaded() {
-        assertEquals(escalonador.getReadyProcess().get(0), "TESTE-1\n" +
+        assertEquals(escalonador.getReadyProcessInput().get(0), "TESTE-1\n" +
                 "X=8\n" +
                 "COM\n" +
                 "COM\n" +
@@ -70,7 +71,7 @@ public class TestCore {
 
     @Test
     public void testIsRightFileLoadedNotrepeated() {
-        assertNotEquals(escalonador.getReadyProcess().get(1), "TESTE-1\n" +
+        assertNotEquals(escalonador.getReadyProcessInput().get(1), "TESTE-1\n" +
                 "X=8\n" +
                 "COM\n" +
                 "COM\n" +
@@ -85,12 +86,12 @@ public class TestCore {
 
     @Test
     public void testIsSecondFileNotEmpty() {
-        assertNotEquals(escalonador.getReadyProcess().get(1).length(), 0);
+        assertNotEquals(escalonador.getReadyProcessInput().get(1).length(), 0);
     }
 
     @Test
     public void testBCPConstruction() {
-        BCP bcp = new BCP(escalonador.getReadyProcess().get(0));
+        BCP bcp = new BCP(escalonador.getReadyProcessInput().get(0));
 
         assertTrue(bcp.getX() == 0);
         assertTrue(bcp.getY() == 0);
@@ -102,7 +103,7 @@ public class TestCore {
 
     @Test
     public void testBCPProgramDigest() {
-        BCP bcp = new BCP(escalonador.getReadyProcess().get(0));
+        BCP bcp = new BCP(escalonador.getReadyProcessInput().get(0));
         String string = "1\n2\n3\n";
         List<String> list;
         list = bcp.digestProgram(string);
