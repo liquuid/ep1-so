@@ -1,4 +1,6 @@
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -29,6 +31,7 @@ public class Escalonador {
     static int contadorTrocas = 0;
     static int contadorInstrucoes = 0;
     static double mediaInstrucoes =0.0;
+    static int totalInstrucoes = 0;
 
     public Escalonador() {
         this.readFiles();
@@ -73,8 +76,8 @@ public class Escalonador {
 
         for (String file_name : lista) {
             try {
-                URL url = Escalonador.class.getResource(file_name);
-                readyProcessInput.add(readFile(url.getPath(), Charset.defaultCharset()));
+                //URL url = Escalonador.class.getResource(file_name);
+                readyProcessInput.add(readFile("processos/" + file_name , Charset.defaultCharset()));
                 i++;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -84,8 +87,8 @@ public class Escalonador {
 
     private static void readQuantum() {
         try {
-            URL url = Escalonador.class.getResource(quantum_name);
-            quantum = Integer.parseInt(readFile(url.getPath(), Charset.defaultCharset()).replace("\n", ""));
+           // URL url = "processos/quantum.txt";  //Escalonador.class.getResource(quantum_name);
+            quantum = Integer.parseInt(readFile("processos/quantum.txt", Charset.defaultCharset()).replace("\n", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,8 +106,23 @@ public class Escalonador {
     public static void main(String[] args) {
         readFiles();
         readQuantum();
+
+        FileWriter arq = null;
+        try {
+            arq = new FileWriter("logfile-" + quantum + ".txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PrintWriter logWrite = new PrintWriter(arq);
+
+        //logWrite.printf("+--Resultado--+%n");
+        //for (i=1; i<=10; i++) {
+        ////}
+        //logWrite.printf("+-------------+%n");
+
+
         for (String string : readyProcessInput) {
-            System.out.println("Carregando: " + string.split("\n")[0]);
+            logWrite.println("Carregando: " + string.split("\n")[0]);
             BCP bcp = new BCP(string);
             bcp.setPc(1);
             bcp.setState(0);
@@ -114,7 +132,7 @@ public class Escalonador {
         int num_instrucoes = 1;
         BCP bcp = readyProcesses.element();
         bcp.setState(1);
-        System.out.println("Executando " + bcp.getName());
+        logWrite.println("Executando " + bcp.getName());
 
         loop:
         while (tabelaProcesso.size() != 0) {
@@ -132,14 +150,15 @@ public class Escalonador {
                     if (readyProcesses.size() > 0) {
                         readyProcesses.remove();
                     }
-                    System.out.println(bcp.getName() + " Terminado. X=" + bcp.getX() + " Y=" + bcp.getY());
+                    logWrite.println(bcp.getName() + " Terminado. X=" + bcp.getX() + " Y=" + bcp.getY());
                     tabelaProcesso.remove(bcp);
                     decrementPenalty();
 
                     if (readyProcesses.size() > 0) {
                         bcp = readyProcesses.element();
-                        System.out.println("Executando " + bcp.getName());
+                        logWrite.println("Executando " + bcp.getName());
                     }
+                    contadorTrocas += 1;
                     contadorInstrucoes += 1;
                     continue loop;
                 case "E/S":
@@ -149,14 +168,14 @@ public class Escalonador {
                     bcp.incrementPC();
                     readyProcesses.remove();
                     blockedProcesses.add(bcp);
-                    System.out.println("Iniciando E/S de " + bcp.getName());
+                    logWrite.println("Iniciando E/S de " + bcp.getName());
                     mediaInstrucoes = mediaInstrucoes + num_instrucoes;
                     num_instrucoes = 1;
                     if (readyProcesses.size() > 0) {
                         bcp = readyProcesses.element();
                         continue loop;
                     }
-                    System.out.println("Executando " + bcp.getName());
+                    logWrite.println("Executando " + bcp.getName());
                     contadorInstrucoes += 1;
                     contadorTrocas += 1;
                     continue loop;
@@ -184,21 +203,26 @@ public class Escalonador {
 
                 num_instrucoes = 1;
                 readyProcesses.add(bcp);
-                System.out.println("Interrompendo " + bcp.getName() + " apos 3 instrucoes");
+                logWrite.println("Interrompendo " + bcp.getName() + " apos 3 instrucoes");
                 bcp = readyProcesses.element();
                 bcp.setState(1);
-                System.out.println("Executando " + bcp.getName());
+                logWrite.println("Executando " + bcp.getName());
                 contadorTrocas += 1;
 
 
             }
-            //break;
+            totalInstrucoes += 1;
         }
 
-        System.out.println("MEDIA DE TROCAS: " + contadorTrocas/10.0);
-        System.out.println("MEDIA DE INSTRUCOES: " + mediaInstrucoes/contadorTrocas);
+        logWrite.println("MEDIA DE TROCAS: " + contadorTrocas/10.0);
+        logWrite.println("MEDIA DE INSTRUCOES: " + mediaInstrucoes/contadorTrocas);
 
-        System.out.println("Quantum: " + quantum);
+        logWrite.println("Quantum: " + quantum);
+        try {
+            arq.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
