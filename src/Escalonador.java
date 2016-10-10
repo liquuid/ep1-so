@@ -19,13 +19,15 @@ public class Escalonador {
             "08.txt",
             "09.txt",
             "10.txt"
-            };
+    };
     static private final String quantum_name = "quantum.txt";
     static private ArrayList<String> readyProcessInput = new ArrayList<String>();
     static private int quantum = 0;
     static Queue<BCP> readyProcesses = new LinkedList<BCP>();
     static Queue<BCP> blockedProcesses = new LinkedList<BCP>();
     static LinkedList<BCP> tabelaProcesso = new LinkedList<BCP>();
+    static int contadorTrocas = 0;
+    static int contadorInstrucoes = 0;
 
     public Escalonador() {
         this.readFiles();
@@ -33,14 +35,14 @@ public class Escalonador {
 
     }
 
-    private static void decrementPenalty(){
+    private static void decrementPenalty() {
         LinkedList<BCP> temp = new LinkedList<BCP>();
 
         temp.addAll(blockedProcesses);
 
-        for (BCP bcp: temp){
+        for (BCP bcp : temp) {
             bcp.reducePenalty();
-            if (bcp.getPenalty() == 0){
+            if (bcp.getPenalty() == 0) {
                 blockedProcesses.remove(bcp);
                 readyProcesses.add(bcp);
             }
@@ -122,20 +124,21 @@ public class Escalonador {
             switch (instrucao) {
                 case "COM":
                     num_instrucoes = num_instrucoes + 1;
+                    contadorInstrucoes += 1;
                     break;
                 case "SAIDA":
                     num_instrucoes = 1;
                     readyProcesses.remove();
-                    System.out.println(bcp.getName() + " Terminado. X=" + bcp.getX()+" Y=" + bcp.getY());
+                    System.out.println(bcp.getName() + " Terminado. X=" + bcp.getX() + " Y=" + bcp.getY());
                     tabelaProcesso.remove(bcp);
                     decrementPenalty();
 
-                    if(readyProcesses.size()>0) {
+                    if (readyProcesses.size() > 0) {
                         bcp = readyProcesses.element();
                         System.out.println("Executando " + bcp.getName());
                     }
-
-                        continue loop;
+                    contadorInstrucoes += 1;
+                    continue loop;
                 case "E/S":
                     decrementPenalty();
                     bcp.setState(2);
@@ -147,12 +150,13 @@ public class Escalonador {
                     num_instrucoes = 1;
                     bcp = readyProcesses.element();
                     System.out.println("Executando " + bcp.getName());
-
+                    contadorInstrucoes += 1;
+                    contadorTrocas += 1;
                     continue loop;
 
                 default:
                     String param = instrucao.split("=")[0];
-
+                    contadorInstrucoes += 1;
                     if (param.equals("X")) {
                         bcp.setX(Integer.parseInt(instrucao.split("=")[1]));
                         num_instrucoes = num_instrucoes + 1;
@@ -164,7 +168,7 @@ public class Escalonador {
             }
 
             bcp.incrementPC();
-            if (num_instrucoes > quantum){
+            if (num_instrucoes > quantum) {
                 decrementPenalty();
                 //  pronto = 0, executando = 1, bloqueado = 2
                 bcp.setState(0);
@@ -175,7 +179,7 @@ public class Escalonador {
                 bcp = readyProcesses.element();
                 bcp.setState(1);
                 System.out.println("Executando " + bcp.getName());
-
+                contadorTrocas += 1;
 
 
             }
