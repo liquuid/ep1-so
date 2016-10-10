@@ -14,12 +14,6 @@ public class TestCore {
     }
 
     @Test
-    public void dummyTest() {
-        Core core = new Core();
-        assertEquals("hello", core.hello());
-    }
-
-    @Test
     public void testFilesList() {
 
         String[] lista = {

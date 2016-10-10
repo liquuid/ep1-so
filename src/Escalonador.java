@@ -28,6 +28,7 @@ public class Escalonador {
     static LinkedList<BCP> tabelaProcesso = new LinkedList<BCP>();
     static int contadorTrocas = 0;
     static int contadorInstrucoes = 0;
+    static double mediaInstrucoes =0.0;
 
     public Escalonador() {
         this.readFiles();
@@ -128,7 +129,9 @@ public class Escalonador {
                     break;
                 case "SAIDA":
                     num_instrucoes = 1;
-                    readyProcesses.remove();
+                    if (readyProcesses.size() > 0) {
+                        readyProcesses.remove();
+                    }
                     System.out.println(bcp.getName() + " Terminado. X=" + bcp.getX() + " Y=" + bcp.getY());
                     tabelaProcesso.remove(bcp);
                     decrementPenalty();
@@ -147,8 +150,12 @@ public class Escalonador {
                     readyProcesses.remove();
                     blockedProcesses.add(bcp);
                     System.out.println("Iniciando E/S de " + bcp.getName());
+                    mediaInstrucoes = mediaInstrucoes + num_instrucoes;
                     num_instrucoes = 1;
-                    bcp = readyProcesses.element();
+                    if (readyProcesses.size() > 0) {
+                        bcp = readyProcesses.element();
+                        continue loop;
+                    }
                     System.out.println("Executando " + bcp.getName());
                     contadorInstrucoes += 1;
                     contadorTrocas += 1;
@@ -168,11 +175,13 @@ public class Escalonador {
             }
 
             bcp.incrementPC();
-            if (num_instrucoes > quantum) {
+            if (num_instrucoes >= quantum ) {
                 decrementPenalty();
                 //  pronto = 0, executando = 1, bloqueado = 2
                 bcp.setState(0);
                 readyProcesses.remove();
+                mediaInstrucoes = mediaInstrucoes + num_instrucoes;
+
                 num_instrucoes = 1;
                 readyProcesses.add(bcp);
                 System.out.println("Interrompendo " + bcp.getName() + " apos 3 instrucoes");
@@ -186,8 +195,9 @@ public class Escalonador {
             //break;
         }
 
-        System.out.println("MEDIA DE TROCAS: " + "xx");
-        System.out.println("MEDIA DE INSTRUCOES: " + "xx");
+        System.out.println("MEDIA DE TROCAS: " + contadorTrocas/10.0);
+        System.out.println("MEDIA DE INSTRUCOES: " + mediaInstrucoes/contadorTrocas);
+
         System.out.println("Quantum: " + quantum);
     }
 
