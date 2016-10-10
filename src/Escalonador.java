@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Escalonador {
-    private final String[] lista = {
+    static private final String[] lista = {
             "01.txt",
             "02.txt",
             "03.txt",
@@ -20,12 +20,12 @@ public class Escalonador {
             "09.txt",
             "10.txt"
             };
-    private final String quantum_name = "quantum.txt";
-    private ArrayList<String> readyProcessInput = new ArrayList<String>();
-    private int quantum = 0;
-    Queue<BCP> readyProcesses = new LinkedList<BCP>();
-    Queue<BCP> blockedProcesses = new LinkedList<BCP>();
-    LinkedList<BCP> tabelaProcesso = new LinkedList<BCP>();
+    static private final String quantum_name = "quantum.txt";
+    static private ArrayList<String> readyProcessInput = new ArrayList<String>();
+    static private int quantum = 0;
+    static Queue<BCP> readyProcesses = new LinkedList<BCP>();
+    static Queue<BCP> blockedProcesses = new LinkedList<BCP>();
+    static LinkedList<BCP> tabelaProcesso = new LinkedList<BCP>();
 
     public Escalonador() {
         this.readFiles();
@@ -33,7 +33,7 @@ public class Escalonador {
 
     }
 
-    private void decrementPenalty(){
+    private static void decrementPenalty(){
         LinkedList<BCP> temp = new LinkedList<BCP>();
 
         temp.addAll(blockedProcesses);
@@ -49,11 +49,11 @@ public class Escalonador {
     }
 
 
-    public String[] getLista() {
+    static public String[] getLista() {
         return lista;
     }
 
-    public String getQuantumFileName() {
+    static public String getQuantumFileName() {
         return quantum_name;
     }
 
@@ -65,12 +65,12 @@ public class Escalonador {
 
     }
 
-    private void readFiles() {
+    private static void readFiles() {
         int i = 0;
 
         for (String file_name : lista) {
             try {
-                URL url = getClass().getResource(file_name);
+                URL url = Escalonador.class.getResource(file_name);
                 readyProcessInput.add(readFile(url.getPath(), Charset.defaultCharset()));
                 i++;
             } catch (IOException e) {
@@ -79,26 +79,28 @@ public class Escalonador {
         }
     }
 
-    private void readQuantum() {
+    private static void readQuantum() {
         try {
-            URL url = getClass().getResource(this.quantum_name);
-            this.quantum = Integer.parseInt(readFile(url.getPath(), Charset.defaultCharset()).replace("\n", ""));
+            URL url = Escalonador.class.getResource(quantum_name);
+            quantum = Integer.parseInt(readFile(url.getPath(), Charset.defaultCharset()).replace("\n", ""));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    public ArrayList<String> getReadyProcessInput() {
+    static public ArrayList<String> getReadyProcessInput() {
         return readyProcessInput;
     }
 
     public int getQuantum() {
-        return this.quantum;
+        return quantum;
     }
 
-    public void run() {
-        for (String string : this.readyProcessInput) {
+    public static void main(String[] args) {
+        readFiles();
+        readQuantum();
+        for (String string : readyProcessInput) {
             System.out.println("Carregando: " + string.split("\n")[0]);
             BCP bcp = new BCP(string);
             bcp.setPc(1);
@@ -109,17 +111,17 @@ public class Escalonador {
         int num_instrucoes = 1;
         BCP bcp = readyProcesses.element();
         bcp.setState(1);
+        System.out.println("Executando " + bcp.getName());
 
         loop:
         while (tabelaProcesso.size() != 0) {
-            System.out.println("Executando " + bcp.getName());
+            //System.out.println("Executando " + bcp.getName());
 
             String instrucao = bcp.getCurrentInstruction();
 
             switch (instrucao) {
                 case "COM":
                     num_instrucoes = num_instrucoes + 1;
-                    //System.out.println("COM");
                     break;
                 case "SAIDA":
                     num_instrucoes = 1;
@@ -128,10 +130,12 @@ public class Escalonador {
                     tabelaProcesso.remove(bcp);
                     decrementPenalty();
 
-                    if(readyProcesses.size()>0)
+                    if(readyProcesses.size()>0) {
                         bcp = readyProcesses.element();
+                        System.out.println("Executando " + bcp.getName());
+                    }
 
-                    continue loop;
+                        continue loop;
                 case "E/S":
                     decrementPenalty();
                     bcp.setState(2);
@@ -139,10 +143,11 @@ public class Escalonador {
                     bcp.incrementPC();
                     readyProcesses.remove();
                     blockedProcesses.add(bcp);
-                    System.out.println("Interrompendo " + bcp.getName() + " apos " + num_instrucoes + " [E/S]");
+                    System.out.println("Iniciando E/S de " + bcp.getName());
                     num_instrucoes = 1;
                     bcp = readyProcesses.element();
-                    //System.out.println("E/S");
+                    System.out.println("Executando " + bcp.getName());
+
                     continue loop;
 
                 default:
@@ -158,7 +163,6 @@ public class Escalonador {
                     }
             }
 
-            System.out.println(instrucao);
             bcp.incrementPC();
             if (num_instrucoes > quantum){
                 decrementPenalty();
@@ -170,6 +174,8 @@ public class Escalonador {
                 System.out.println("Interrompendo " + bcp.getName() + " apos 3 instrucoes");
                 bcp = readyProcesses.element();
                 bcp.setState(1);
+                System.out.println("Executando " + bcp.getName());
+
 
 
             }
@@ -180,4 +186,5 @@ public class Escalonador {
         System.out.println("MEDIA DE INSTRUCOES: " + "xx");
         System.out.println("Quantum: " + quantum);
     }
+
 }
